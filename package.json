@@ -10,7 +10,7 @@
     "build": "tsc",
     "test": "jest --forceExit --verbose --coverage",
     "format": "prettier --write '**/*.{mjs,js,ts}'",
-    "postinstall": "playwright install firefox"
+    "pretest": "playwright install firefox"
   },
   "dependencies": {
     "@swc/core": "^1.2.145",
