@@ -6,6 +6,13 @@
   "repository": "https://github.com/Menci/vite-plugin-public-path.git",
   "author": "Menci <huanghaorui301@gmail.com>",
   "license": "MIT",
+  "keywords": [
+    "vite",
+    "plugin",
+    "dynamic",
+    "publicpath",
+    "__webpack_public_path__"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "jest --forceExit --verbose --coverage",
