@@ -130,6 +130,9 @@ async function runTest(modernBrowser: boolean) {
       }
     });
   });
+  
+  const externalScriptSrc = await page.locator("[data-external]").getAttribute("src");
+  expect(externalScriptSrc).toEqual("https://cdn.somewhere.net/foo.min.js");
 
   expect(foundLog).toEqual(expectedLog);
 }

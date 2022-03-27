@@ -91,7 +91,9 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     })
     .join(";");
 
-  const scriptTags = document.querySelectorAll("script[src], script[nomodule]");
+  const scriptTags = document.querySelectorAll("script[src], script[nomodule]")
+    .filter(tag => tag.attributes["data-external"] === undefined);
+
   const addScriptTagsCode = scriptTags
     .map(tag => {
       const patchAttributes = ["src", "data-src"];
