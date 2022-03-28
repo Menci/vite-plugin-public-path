@@ -77,17 +77,25 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     if (url.startsWith(urlPrefix)) url = url.slice(urlPrefix.length);
     return url;
   };
+  const urlToExpression = (url: string) => {
+    url = normalizeUrl(url);
+
+    // Check absolute URLs
+    if (["//", "http://", "https://", "data:"].some(prefix => url.toLowerCase().startsWith(prefix))) {
+      return serialize(url);
+    }
+
+    return `${options.publicPathExpression} + ${serialize(url)}`;
+  };
 
   const linkTags = document
     .querySelectorAll("link[rel]")
     .filter(link => link.getAttribute("href").startsWith(urlPrefix));
   const addLinkTagsCode = linkTags
     .map(tag => {
-      const href = normalizeUrl(tag.getAttribute("href"));
+      const href = tag.getAttribute("href");
       const rel = tag.getAttribute("rel");
-      return `${htmlOptions.functionNameAddLinkTag}(${serialize(rel)}, ${options.publicPathExpression} + ${serialize(
-        href
-      )})`;
+      return `${htmlOptions.functionNameAddLinkTag}(${serialize(rel)}, ${urlToExpression(href)})`;
     })
     .join(";");
 
@@ -100,11 +108,7 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
           Object.entries(tag.attributes)
             .map(
               ([key, value]) =>
-                serialize(key) +
-                ": " +
-                (patchAttributes.includes(key)
-                  ? `${options.publicPathExpression} + ${serialize(normalizeUrl(value))}`
-                  : serialize(value))
+                serialize(key) + ": " + (patchAttributes.includes(key) ? urlToExpression(value) : serialize(value))
             )
             .join(", ") +
           " }",
