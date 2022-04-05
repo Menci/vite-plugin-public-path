@@ -79,12 +79,6 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
   };
   const urlToExpression = (url: string) => {
     url = normalizeUrl(url);
-
-    // Check absolute URLs
-    if (["//", "http://", "https://", "data:"].some(prefix => url.toLowerCase().startsWith(prefix))) {
-      return serialize(url);
-    }
-
     return `${options.publicPathExpression} + ${serialize(url)}`;
   };
 
@@ -99,7 +93,10 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     })
     .join(";");
 
-  const scriptTags = document.querySelectorAll("script[src], script[nomodule]");
+  const absoluteUrls = ["//", "http://", "https://", "data:"];
+  const scriptTags = document.querySelectorAll("script[src], script[nomodule]")
+    .filter(t => !absoluteUrls.some(prefix => t.getAttribute("src")?.toLowerCase().startsWith(prefix)));
+
   const addScriptTagsCode = scriptTags
     .map(tag => {
       const patchAttributes = ["src", "data-src"];
