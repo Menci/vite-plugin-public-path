@@ -1,4 +1,5 @@
-import type { Plugin } from "vite";
+import { createFilter } from "@rollup/pluginutils";
+import type { Plugin, ResolvedConfig } from "vite";
 
 import { processAsset } from "./processing/asset";
 import { processHtml } from "./processing/html";
@@ -31,6 +32,10 @@ export interface Options {
    * The expression should evaluate to a string ending with "/".
    */
   publicPathExpression: string;
+  /**
+   * Any script tags whose src or data-src attributes match the provided filter(s) will not be rewritten.
+   */
+  excludeScripts?: ReadonlyArray<string | RegExp> | string | RegExp;
   /**
    * ### `string`
    *
@@ -66,7 +71,8 @@ export interface Options {
   html: string | boolean | HtmlAdvancedOptions;
 }
 
-export type ViteConfig = Parameters<Plugin["configResolved"]>[0];
+type FilterFunction = (id: unknown) => boolean;
+export type ViteConfig = ResolvedConfig & { excludeScriptsFilter?: FilterFunction };
 
 export function publicPath(options: Options): Plugin {
   let viteConfig: ViteConfig;
@@ -77,6 +83,9 @@ export function publicPath(options: Options): Plugin {
     apply: "build",
     configResolved(resolvedConfig) {
       viteConfig = resolvedConfig;
+      viteConfig.excludeScriptsFilter = options.excludeScripts 
+        ? createFilter(options.excludeScripts)
+        : undefined;
 
       /* istanbul ignore next */
       if (!viteConfig.base || viteConfig.base === "/") {

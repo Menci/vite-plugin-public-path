@@ -4,6 +4,10 @@ import serialize from "serialize-javascript";
 import { ViteConfig, Options } from "..";
 
 export function processHtml(config: ViteConfig, options: Options, _fileName: string, html: string) {
+  if (!config.excludeScriptsFilter) {
+    config.excludeScriptsFilter = () => false;
+  }
+
   // Just load from a static base
   if (typeof options.html === "string") {
     return html.split(config.base).join(options.html);
@@ -99,10 +103,19 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     })
     .join(";");
 
-  const scriptTags = document.querySelectorAll("script[src], script[nomodule]");
+  const patchAttributes = ["src", "data-src"];
+  const scriptTags = document.querySelectorAll("script[src], script[nomodule]")
+    .filter(tag => {
+      if (!patchAttributes.some(attr => tag.hasAttribute(attr))) {
+        // script tag has no src or data-src, keep tag for rewrite.
+        return true;
+      }
+
+      const src = tag.getAttribute("src") ?? tag.getAttribute("data-src");
+      return !config.excludeScriptsFilter(src);
+    });
   const addScriptTagsCode = scriptTags
     .map(tag => {
-      const patchAttributes = ["src", "data-src"];
       const args = [
         "{ " +
           Object.entries(tag.attributes)

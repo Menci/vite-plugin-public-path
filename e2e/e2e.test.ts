@@ -11,6 +11,8 @@ import express from "express";
 import mime from "mime";
 import type { AddressInfo } from "net";
 
+const excludeFilter = /^(https:).*systemjs/;
+
 async function build() {
   const result = await vite.build({
     root: __dirname,
@@ -19,7 +21,8 @@ async function build() {
       vitePluginLegacy(),
       vitePluginPublicPath({
         publicPathExpression: "window.publicPath",
-        html: true
+        html: true,
+        excludeScripts: excludeFilter
       })
     ],
     logLevel: "error"
@@ -130,6 +133,12 @@ async function runTest(modernBrowser: boolean) {
       }
     });
   });
+  
+  const excludedScriptTag = await page.$("script[src]");
+  expect(excludedScriptTag).not.toBeNull();
+
+  const srcAtttibute = await excludedScriptTag.getAttribute("src");
+  expect(excludeFilter.test(srcAtttibute)).toBeTrue();
 
   expect(foundLog).toEqual(expectedLog);
 }
