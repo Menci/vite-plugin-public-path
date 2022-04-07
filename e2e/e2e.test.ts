@@ -133,7 +133,7 @@ async function runTest(modernBrowser: boolean) {
       }
     });
   });
-  
+
   const excludedScriptTag = await page.$("script[src]");
   expect(excludedScriptTag).not.toBeNull();
 
