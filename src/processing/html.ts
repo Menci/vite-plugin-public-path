@@ -1,3 +1,4 @@
+import { createFilter } from "@rollup/pluginutils";
 import { parse } from "node-html-parser";
 import serialize from "serialize-javascript";
 
@@ -99,10 +100,19 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     })
     .join(";");
 
-  const scriptTags = document.querySelectorAll("script[src], script[nomodule]");
+  const patchAttributes = ["src", "data-src"];
+  const excludeScriptsFilter = options.excludeScripts ? createFilter(options.excludeScripts) : () => false;
+  const scriptTags = document.querySelectorAll("script[src], script[nomodule]").filter(tag => {
+    if (!patchAttributes.some(attr => tag.hasAttribute(attr))) {
+      // script tag has no src or data-src, keep tag for rewrite.
+      return true;
+    }
+
+    const src = tag.getAttribute("src") ?? tag.getAttribute("data-src");
+    return !excludeScriptsFilter(src);
+  });
   const addScriptTagsCode = scriptTags
     .map(tag => {
-      const patchAttributes = ["src", "data-src"];
       const args = [
         "{ " +
           Object.entries(tag.attributes)

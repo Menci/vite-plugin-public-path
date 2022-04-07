@@ -20,6 +20,7 @@
     "pretest": "playwright install firefox"
   },
   "dependencies": {
+    "@rollup/pluginutils": "^4.2.0",
     "@swc/core": "^1.2.145",
     "node-html-parser": "^5.2.0",
     "serialize-javascript": "^6.0.0"

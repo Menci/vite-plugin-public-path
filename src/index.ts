@@ -32,6 +32,10 @@ export interface Options {
    */
   publicPathExpression: string;
   /**
+   * Any script tags whose src or data-src attributes match the provided filter(s) will not be rewritten.
+   */
+  excludeScripts?: ReadonlyArray<string | RegExp> | string | RegExp;
+  /**
    * ### `string`
    *
    * Pass a string to NOT to use dynamic public path in `index.html` but remove the impact of placeholder
