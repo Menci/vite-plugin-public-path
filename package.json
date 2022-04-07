@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-public-path",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Vite's equivalent of `__webpack_public_path__` in Webpack. Works for `index.html` and modern/legacy build.",
   "main": "dist/index.js",
   "repository": "https://github.com/Menci/vite-plugin-public-path.git",
