@@ -1,13 +1,10 @@
+import { createFilter } from "@rollup/pluginutils";
 import { parse } from "node-html-parser";
 import serialize from "serialize-javascript";
 
 import { ViteConfig, Options } from "..";
 
 export function processHtml(config: ViteConfig, options: Options, _fileName: string, html: string) {
-  if (!config.excludeScriptsFilter) {
-    config.excludeScriptsFilter = () => false;
-  }
-
   // Just load from a static base
   if (typeof options.html === "string") {
     return html.split(config.base).join(options.html);
@@ -102,8 +99,9 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
       return `${htmlOptions.functionNameAddLinkTag}(${serialize(rel)}, ${urlToExpression(href)})`;
     })
     .join(";");
-
+  
   const patchAttributes = ["src", "data-src"];
+  const excludeScriptsFilter = options.excludeScripts ? createFilter(options.excludeScripts) : () => false;
   const scriptTags = document.querySelectorAll("script[src], script[nomodule]")
     .filter(tag => {
       if (!patchAttributes.some(attr => tag.hasAttribute(attr))) {
@@ -112,7 +110,7 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
       }
 
       const src = tag.getAttribute("src") ?? tag.getAttribute("data-src");
-      return !config.excludeScriptsFilter(src);
+      return !excludeScriptsFilter(src);
     });
   const addScriptTagsCode = scriptTags
     .map(tag => {

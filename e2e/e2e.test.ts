@@ -11,7 +11,7 @@ import express from "express";
 import mime from "mime";
 import type { AddressInfo } from "net";
 
-const excludeFilter = /^(https:).*systemjs/;
+const excludeFilter = /^https:.*systemjs/;
 
 async function build() {
   const result = await vite.build({

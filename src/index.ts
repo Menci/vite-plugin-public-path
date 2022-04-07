@@ -1,5 +1,4 @@
-import { createFilter } from "@rollup/pluginutils";
-import type { Plugin, ResolvedConfig } from "vite";
+import type { Plugin } from "vite";
 
 import { processAsset } from "./processing/asset";
 import { processHtml } from "./processing/html";
@@ -71,8 +70,7 @@ export interface Options {
   html: string | boolean | HtmlAdvancedOptions;
 }
 
-type FilterFunction = (id: unknown) => boolean;
-export type ViteConfig = ResolvedConfig & { excludeScriptsFilter?: FilterFunction };
+export type ViteConfig = Parameters<Plugin["configResolved"]>[0];
 
 export function publicPath(options: Options): Plugin {
   let viteConfig: ViteConfig;
@@ -83,9 +81,6 @@ export function publicPath(options: Options): Plugin {
     apply: "build",
     configResolved(resolvedConfig) {
       viteConfig = resolvedConfig;
-      viteConfig.excludeScriptsFilter = options.excludeScripts 
-        ? createFilter(options.excludeScripts)
-        : undefined;
 
       /* istanbul ignore next */
       if (!viteConfig.base || viteConfig.base === "/") {
