@@ -34,10 +34,12 @@ export default defineConfig({
       // A JS expression evaluates on client side each time when loading a new file
       // Should evaluate to a string ending with "/"
       publicPathExpression: "window.publicPath",
-      // Optional. The plugin will not rewrite any <script> tag whose source matches the provided filters. Can be string, string[], RegExp or RegExp[].
-      excludeScripts: /^https:.*systemjs/
       // See below for explanation of `options.html`
-      html: true
+      html: true,
+      // (Optional) The plugin will not rewrite any <script> tags whose src matches the provided filters
+      // Useful for your external dependencies
+      // Can be string, string[], RegExp or RegExp[]
+      excludeScripts: /^https:.*systemjs/
     }),
     // You may need `vite-plugin-html-minifier-terser` since this plugin outputs non-minified inline JS code
     minifyHtml({ minifyJS: true })
