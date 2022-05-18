@@ -3,6 +3,10 @@
   "version": "0.0.5",
   "description": "Vite's equivalent of `__webpack_public_path__` in Webpack. Works for `index.html` and modern/legacy build.",
   "main": "dist/index.js",
+  "exports": {
+    "import": "./exports/import.mjs",
+    "require": "./exports/require.cjs"
+  },
   "repository": "https://github.com/Menci/vite-plugin-public-path.git",
   "author": "Menci <huanghaorui301@gmail.com>",
   "license": "MIT",
@@ -16,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest --forceExit --verbose --coverage",
-    "format": "prettier --write '**/*.{mjs,js,ts}'",
+    "format": "prettier --write '**/*.{mjs,cjs,js,ts}'",
     "pretest": "playwright install firefox"
   },
   "dependencies": {
@@ -49,6 +53,7 @@
     }
   },
   "files": [
-    "/dist"
+    "/dist",
+    "/exports"
   ]
 }

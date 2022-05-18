@@ -72,7 +72,7 @@ export interface Options {
 
 export type ViteConfig = Parameters<Plugin["configResolved"]>[0];
 
-export function publicPath(options: Options): Plugin {
+export default function publicPath(options: Options): Plugin {
   let viteConfig: ViteConfig;
 
   return {
@@ -110,5 +110,3 @@ export function publicPath(options: Options): Plugin {
     }
   };
 }
-
-export default publicPath;
