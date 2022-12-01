@@ -45,7 +45,7 @@
     "vite": "^2.8.4"
   },
   "peerDependencies": {
-    "vite": "^2.8"
+    "vite": ">=2.8"
   },
   "config": {
     "commitizen": {
