@@ -42,10 +42,11 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
       "\n" +
         "<script>\n" +
         "  (function () {\n" +
-        `    function ${htmlOptions.functionNameAddLinkTag}(rel, href) {\n` +
+        `    function ${htmlOptions.functionNameAddLinkTag}(rel, href, integrity) {\n` +
         '      var link = document.createElement("link");\n' +
         "      link.rel = rel;\n" +
         "      link.href = href;\n" +
+        "      if (integrity) { link.integrity = integrity; };\n" +
         "      document.head.appendChild(link);\n" +
         "    }\n" +
         `    ${htmlOptions.addLinkTagsPlaceholder}\n` +
@@ -96,7 +97,8 @@ export function processHtml(config: ViteConfig, options: Options, _fileName: str
     .map(tag => {
       const href = tag.getAttribute("href");
       const rel = tag.getAttribute("rel");
-      return `${htmlOptions.functionNameAddLinkTag}(${serialize(rel)}, ${urlToExpression(href)})`;
+      const integrity = tag.getAttribute("integrity");
+      return `${htmlOptions.functionNameAddLinkTag}(${serialize(rel)}, ${urlToExpression(href)}, ${serialize(integrity)})`;
     })
     .join(";");
 
